@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROFL</title>
+  <link rel="icon" type="image/png" href="assets/favicon-2.png">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script>
+    if (window.matchMedia("(max-width: 820px)").matches && !window.location.search.includes("desktop=1")) {
+      window.location.replace("mobile.html");
+    }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @font-face {
+      font-family: 'Tomorrow';
+      src: url('assets/FredokaOne.5165c0facbfede7afe6c9ef3fd635.6169c5d7dbe181f6a0a982b82c673bc5.ttf');
+    }
+
+    
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Tomorrow', sans-serif;
+      scroll-behavior: smooth;
+      /* background-color: black; */
+      color: white;
+    }
+
+    h1, h2, a {
+      font-family: 'Tomorrow', sans-serif;
+    }
+
+    h3, span {
+      font-family: 'Tomorrow', sans-serif;
+    }
+
+    p {
+      font-family: 'Tomorrow', sans-serif;
+      /* line-height: 28px !important; */
+    }
+
+    td {
+      font-family: 'Tomorrow', sans-serif;
+      font-size: 20px;
+    }
+
+    .running-text {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background-color: #9c5d11;
+      overflow: hidden;
+      white-space: nowrap;
+      z-index: 9999;
+    }
+
+    .running-text span {
+      display: inline-block;
+      padding-left: 100%;
+      animation: marquee 20s linear infinite;
+      color: white;
+      font-weight: bold;
+      font-size: 20px;
+      line-height: 40px;
+    }
+
+    @keyframes marquee {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
+    section {
+      width: 100%;
+      height: 3280px;
+      background-size: cover;
+      background-position: top center;
+      display: flex;
+      justify-content: start;
+      align-items: start;
+      flex-direction: column;
+      text-align: center;
+      /* padding: 50px 20px 40px; */
+    }
+
+    .section-video {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      align-items: start;
+      align-content: start;
+      padding-top: 10px;
+    }
+
+    .section-video video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      /* height: 100%; */
+      object-fit: contain;
+      z-index: -1;
+    }
+
+    .video-1 video{
+      position: relative;
+    }
+
+    .ggez {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      /* height: 100%; */
+      object-fit: contain;
+      z-index: 2;
+    }
+
+    .section-video .overlay {
+      z-index: 2;
+    }
+
+    .section-video p {
+      /* font-size: 16px; */
+      margin-top: 10px;
+    }
+
+    .search-bar {
+      margin-top: 30px;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      width: 300px;
+      border: none;
+      color: black;
+      font-size: 16px;
+    }
+
+    .portfolio-section {
+      background-image: url('assets/7.png');
+      background-size: cover;
+      background-position: center;
+      padding: 20px 20px;
+      text-align: center;
+      color: white;
+    }
+
+    .portfolio-title {
+      font-size: 36px;
+      margin-bottom: 50px;
+      font-weight: bold;
+    }
+
+    .household-section {
+        background-color: rgba(255, 255, 255, 0.3);
+        padding: 2rem;
+        border-radius: 10px;
+    }
+
+    .portfolio-top {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      margin-bottom: 50px;
+      background-color: rgba(255, 255, 255, 0.3);
+      padding: 2rem;
+      border-radius: 10px;
+    }
+
+    .portfolio-box {
+      background: #0e0e0e;
+      border-radius: 16px;
+      padding: 30px 50px;
+      min-width: 250px;
+    }
+
+    .portfolio-box h4 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #aaa;
+    }
+
+    .portfolio-box p {
+      font-size: 40px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .stats-title {
+      font-size: 24px;
+      margin-bottom: 20px;
+      font-weight: bold;
+      text-align: start;
+    }
+
+    .household-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .stat-box {
+      background: #0e0e0e;
+      padding: 20px 30px;
+      border-radius: 12px;
+      min-width: 220px;
+      text-align: left;
+    }
+
+    .stat-box h5 {
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 8px;
+    }
+
+    .stat-box p {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ffc107;
+    }
+
+    .stat-box.small p {
+      font-size: 16px;
+      color: white;
+    }
+
+    .stat-box-liq {
+        padding: 20px 30px;
+        border-radius: 12px;
+        min-width: 220px;
+        text-align: left;
+        background-color: white;
+        margin-top: 20px;
+    }
+
+    .stat-box-liq h5 {
+      font-size: 14px;
+      color: black;
+      margin-bottom: 8px;
+    }
+
+    .stat-box-liq p {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ffb431;
+    }
+
+    .footer {
+      background-color: transparent;
+      padding: 40px 20px;
+      text-align: center;
+      color: black;
+      margin-top: 0;
+      position: absolute;
+      bottom: 0;
+    }
+
+    .footer-icons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      margin-bottom: 20px;
+      color: black;
+    }
+
+    .footer-icons a {
+      color: black !important;
+      font-size: 28px;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .footer-icons svg {
+      color: black !important;
+    }
+
+    .footer-icons a:hover {
+      color: black;
+      transform: scale(1.2);
+    }
+
+    .footer-text {
+      font-size: 24px;
+      color: white;
+    }
+
+    .social-icons {
+      position: fixed;
+      top: 30%;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 999;
+    }
+
+    .icon-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-circle {
+      width: 56px;
+      height: 56px;
+      background: #f7be1c;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .icon-circle svg {
+      color: black;
+    }
+
+    .icon-circle img {
+      width: 35px;
+      height: auto;
+    }
+
+    .icon-wrapper:hover .icon-circle {
+      transform: scale(1.2);
+      background: rgb(132, 132, 132);
+    }
+
+    .icon-wrapper:hover .icon-circle svg,
+    .icon-wrapper:hover .icon-circle img {
+      color: white;
+      filter: invert(1);
+    }
+
+    .icon-circle-bottom {
+      width: 56px;
+      height: 56px;
+      background: #ffb431;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .icon-circle-bottom svg {
+      color: white;
+    }
+
+    .icon-circle-bottom img {
+      width: 35px;
+      height: auto;
+    }
+
+    .icon-wrapper:hover .icon-circle-bottom {
+      transform: scale(1.2);
+      background: rgb(132, 132, 132);
+    }
+
+    .icon-wrapper:hover .icon-circle-bottom svg,
+    .icon-wrapper:hover .icon-circle-bottom img {
+      color: white;
+      filter: invert(1);
+    }
+
+    .text-box {
+        background-color: white; /* box background */
+        color: black; /* text color */
+        padding: 5px; /* space inside box */
+        border: 2px solid black; /* border thickness and color */
+        border-radius: 10px; /* rounded corners */
+        width: 1000px; /* fit to text size */
+        margin: 20px auto; /* center it */
+        font-size: 200px; /* text size */
+    }
+
+    .neon-text {
+      color: #ffffff;
+
+      /* ★ Neon effect */
+      text-shadow:
+        0 0 5px rgba(255, 255, 255, 0.678)
+    }
+
+    .neon-text-green {
+      color: #92FCCF;
+
+      /* ★ Neon effect */
+      text-shadow:
+        0 0 5px #92fcd0d4;
+    }
+
+    .header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      width: 100%;
+      align-items: center;
+      align-content: center;
+      font-size: 20px;
+      padding: 0.5rem;
+    }
+
+    .header a{
+      cursor: pointer;
+      color: white;
+      text-decoration: none;
+    }
+
+    .header a:hover {
+      text-shadow:
+        0 0 10px rgba(255, 255, 255, 0.865)
+    }
+
+    .sosmed-section {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      gap: 150px;
+      margin-top: 30px;
+      width: 40%;
+    }
+
+    .sosmed-section-icon {
+      padding: 0.8rem;
+      background-color: black;
+      border-radius: 50%;
+    }
+
+    .sosmed-section-icon:hover{
+      opacity: 50%;
+      text-shadow:
+        0 0 100px rgba(255, 255, 255, 0.865)
+    }
+
+    .sosmed-footer {
+      padding: 0.2rem;
+      background-color: black;
+      border-radius: 50%;
+    }
+
+    .sosmed-footer:hover{
+      opacity: 50%;
+      text-shadow:
+        0 0 100px rgba(255, 255, 255, 0.865)
+    }
+
+    .example-copy {
+      width: min(900px, 100%);
+      margin-top: 24px;
+      padding: 24px;
+      border: 1px solid #1df2d3;
+      background: rgba(0, 0, 0, 0.72);
+      text-align: left;
+    }
+
+    .example-copy h2 {
+      margin: 24px 0 12px;
+      color: #ffffff;
+      font-size: 34px;
+    }
+
+    .example-copy h3 {
+      margin: 24px 0 12px;
+      color: #9dfb3e;
+      font-size: 28px;
+    }
+
+    .example-copy p {
+      margin: 0 0 16px;
+      color: #d8fef9;
+      font-size: 18px;
+    }
+
+    .example-copy ol {
+      margin: 0;
+      padding-left: 24px;
+    }
+
+    .example-copy li {
+      margin-bottom: 18px;
+      color: #d8fef9;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .example-copy strong {
+      color: #ffffff;
+    }
+
+    .example-copy .eyebrow {
+      display: inline-block;
+      margin-bottom: 12px;
+      color: #1df2d3;
+      font-size: 16px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .example-copy .cta-link {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 12px 20px;
+      border: 1px solid #1df2d3;
+      color: #ffffff;
+    }
+
+    .leaflet-map-block {
+      position: absolute;
+      left: 0;
+      top: 1400px;
+      width: 500px;
+      height: 340px;
+      overflow: hidden;
+      border: 1px solid #1df2d3;
+      background: rgba(4, 12, 16, 0.92);
+      box-shadow: 0 0 28px rgba(29, 242, 211, 0.12);
+    }
+
+    .leaflet-map-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(29, 242, 211, 0.3);
+      color: #d8fef9;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .leaflet-map-title span:last-child {
+      color: #1df2d3;
+    }
+
+    .leaflet-shell {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      overflow: hidden;
+      background: #08141a;
+    }
+
+    #war-drone-map {
+      width: 100%;
+      height: 100%;
+      background: #08141a;
+    }
+
+    .drone-red {
+      width: 12px;
+      height: 12px;
+      background: red;
+      border-radius: 50%;
+      box-shadow: 0 0 12px red;
+      animation: blink 0.35s infinite;
+    }
+
+    .drone-blue {
+      width: 12px;
+      height: 12px;
+      background: #00aaff;
+      border-radius: 50%;
+      box-shadow: 0 0 12px #00aaff;
+      animation: blink 0.35s infinite;
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(0.85); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .explosion-core {
+      width: 16px;
+      height: 16px;
+      background: yellow;
+      border-radius: 50%;
+      box-shadow: 0 0 30px orange, 0 0 60px red;
+      animation: explodeCore 0.8s forwards;
+    }
+
+    .explosion-ring {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border: 3px solid orange;
+      border-radius: 50%;
+      animation: explodeRing 1s forwards;
+    }
+
+    .explosion-spark {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: orange;
+      border-radius: 50%;
+      animation: spark 1s forwards;
+    }
+
+    @keyframes explodeCore {
+      0% { transform: scale(0.4); opacity: 1; }
+      100% { transform: scale(3); opacity: 0; }
+    }
+
+    @keyframes explodeRing {
+      0% { transform: scale(0.2); opacity: 1; }
+      100% { transform: scale(7); opacity: 0; }
+    }
+
+    @keyframes spark {
+      0% { transform: translate(0, 0); opacity: 1; }
+      100% { transform: translate(var(--x), var(--y)); opacity: 0; }
+    }
+
+    .country {
+      color: white;
+      font-size: 13px;
+      font-weight: bold;
+      text-shadow: 0 0 6px black;
+      font-family: 'Tomorrow', sans-serif;
+    }
+
+    .tiny-white-text {
+        color: white;
+        font-size: 28px;
+        -webkit-text-stroke: 2px black;
+    }
+
+    .black-text {
+        color: black;
+        -webkit-text-stroke: 2px white;
+    }
+
+    .section-1 {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: end;
+        width: 100%;
+        margin-right: 300px;
+    }
+
+    .section-2 {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: start;
+        width: 100%;
+        margin-left: 50px;
+        margin-top: 20px;
+        text-align: left;
+    }
+
+    .section-3 {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-top: 100px;
+    }
+
+    .section-4 {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: start;
+        width: 100%;
+        margin-top: 150px;
+        text-align: start;
+    }
+
+    .section-5 {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-top: 100px;
+        text-align: center;
+    }
+
+    .section-6 {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-top: 100px;
+        text-align: center;
+    }
+    
+
+  </style>
+</head>
+<body style="display: flex;flex-direction: column;justify-content: center;width: 100%;align-items: center;align-content: center;background-color: black;">
+    <section class="section-video" style="width: 1400px;">
+      <video autoplay muted loop>
+        <source src="assets/bg.mp4" type="video/mp4">
+      </video>
+      <!-- <div style="display: flex;flex-direction: row;justify-content: space-around;position: absolute;width: 100%;">
+        <div style="margin-top:10px;width: 10%;display: flex;flex-direction: row;justify-content: center;align-items: center;align-content: center;">
+          <img src="assets/favicon.png" width="50" alt="ROFL Logo"/>
+        </div>
+        <div class="header">
+          <a href="whitepaper.html">WHITEPAPER</a>
+          <a href="token-info.html">TOKEN INFO</a>
+          <a href="utility.html">UTILITY</a>
+          <a href="spotlight.html">SPOTLIGHT</a>
+          <a href="join-now.html">JOIN NOW</a>
+        </div>
+      </div> -->
+      
+      
+      <div style="display: flex;flex-direction: column;justify-content: space-between;height: 100%;padding: 1rem;margin-top: 700px;align-items: center;width: 100%;">
+        <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;align-content: center;padding: 1.5rem;">
+          <div class="section-1 tiny-white-text">
+                <p>
+                    In the beginning, there was only<br>
+                    lol :<br>
+
+                    “funny”, but not “grandma fell<br>
+                    on the stairs” funny. A polite<br>
+                    “ha-ha”. A half-assed reaction.
+                </p>
+                <div style="font-size: 18px;margin-top: 50px;margin-right: 120px;">
+                    <p>
+                        (Not Grandma)
+                    </p>
+                </div>
+                <div style="font-size: 22px;margin-right: 150px;margin-top: 10px;">
+                    <p>
+                        But deep in the trenches of the internet... something was rolling on the ground...
+                    </p>
+                </div>
+            </div>
+            <div class="section-2 tiny-white-text">
+                <h2 style="font-size: 60px;">
+                    The Rise of ROFL
+                </h2>
+                <div style="font-size: 19px;">
+                    <p>
+                        Before emojis, before TikTok edits, before corporate memes...<br><br>
+
+                        There was a simple way to say you laughed out loud, but 100% better: ROFL (Rolling on the<br> 
+                        Floor Laughing) — spinning wildly across forums, mocking everything, powered purely<br> 
+                        by absurdity. Out of that chaos emerged a force that refused to be sanitized.<br><br>
+
+                        $ROFL — not just laughter, but maximum laughter.
+                    </p>
+                </div>
+            </div>
+            <div class="section-3">
+                <div class="tiny-white-text" style="text-align: center;font-size: 36px;">
+                    <p>
+                        No roadmap.<br>
+                        No promises.<br>
+                        No utility pretending<br>
+                        to be revolutionary.
+                    </p>
+                </div>
+                <div style="text-align: end;">
+                    <h2 class="black-text" style="font-size: 55px;">
+                        The Degenerates Awakening
+                    </h2>
+                    <p style="font-size: 22px;">
+                        On the edges of Solana, where rising charts and new legends are born...<br>
+                        A REAL token has arrived.<br><br>
+
+                        Not just another coin — a movement fueled by memes, energy, and community.<br>
+                        One mission: Make the internet laugh, connect, and win together.
+                    </p>
+                </div>
+            </div>
+            <div class="section-4 black-text">
+                <h3 style="font-size: 40px;">
+                    The Cult of Laughter
+                </h3>
+                <p style="font-size: 36px;margin-top: 30px;">
+                    While others chased “AI narratives” and “real-world assets,”<br>
+                    ROFL holders did something different:
+                </p>
+            </div>
+            <div class="section-5 black-text">
+                <div style="font-size: 45px;">
+                    <p>They didn’t cope... &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Not “lol”</p>
+                </div>
+                <div style="font-size: 45px;margin-left: 300px;">
+                    <p>They didn’t panic sell... &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Not “lmao”</p>
+                </div>
+                <div style="font-size: 45px;margin-left: 350px;">
+                    <p>They Laughed. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>ROFL.</p>
+                </div>
+            </div>
+            <div class="section-6 tiny-white-text">
+                <h3 style="font-size: 40px;">
+                    It had:<br>
+                    • 0% tax — because jokes shouldn’t<br>
+                    be taxed<br>
+
+                    • Burned liquidity — because<br>
+                    commitment &gt; words<br>
+
+                    • Community-first chaos —<br>
+                    because memes &gt; fundamentals
+                </h3>
+                <div class="black-text" style="margin-top: 40px;font-size: 40px;">
+                    <h1>
+                        BUY ROFL NOW.
+                    </h1>
+                </div>
+                <div class="black-text" style="margin-top: 50px;">
+                    <p>
+                        $ROFL — the moment you stop taking crypto seriously...
+                    </p>
+                </div>
+            </div>
+            <div style="margin-top: 170px;margin-left: 50px;">
+              <div style="display: flex;flex-direction: row;justify-content: center;align-items: center;align-content: center;gap: 190px;margin-top: 30px;">
+                <a href="https://t.me/roflcoinn">
+                  <div style="width: 50px;height: 50px;">
+                  </div>
+                </a>
+                <a href="https://x.com/roflcoinn">
+                  <div style="width: 50px;height: 50px;">
+                  </div>
+                </a>
+              </div>
+              <div style="display: flex;flex-direction: row;justify-content: center;align-items: center;align-content: center;gap: 150px;margin-top: 30px;">
+                <a href="#">
+                  <div style="width: 50px;height: 50px;">
+                  </div>
+                </a>
+                <a href="#">
+                  <div style="width: 50px;height: 50px;">
+                  </div>
+                </a>
+                <a href="#">
+                  <div style="width: 50px;height: 50px;">
+                  </div>
+                </a>
+              </div>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+            
+          </div>
+
+          
+        </div>
+
+        
+      </div> 
+  </section>
+  
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+</body>
+</html>
